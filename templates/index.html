@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Input Text</title>
+</head>
+<style>
+    /* The animation code */
+    @keyframes example {
+        0%   {background-color:rgba(75, 75, 75, 0.5);}
+        50%  {background-color:rgba(255, 255, 255, 0.5); }
+        100% {background-color:rgba(75, 75, 75, 0.5); }
+    }
+    .bg{
+        width:95%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-image : url('/gambar/background.png');
+    }
+    .center{
+        display : flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        aligment : center;
+    }
+    .bg-alpha{
+        margin-top : 50px;
+        padding : 50px;
+        border-radius : 15px;
+        background-color :rgba(75, 75, 75, 0.5);
+    }
+    .text-style{
+        color : white;
+        font-family: Arial, Helvetica, sans-serif; 
+    }
+    .text-field{
+        width:80%;
+        padding : 10px;
+        border-radius : 10px;
+    }
+    .m-text1{
+        padding : 20px 0 50px 0px;
+        font-size : 1rem;
+    }
+    .btn-style{
+        border-radius : 5px;
+        padding : 10px;
+    }
+    .anggota-kelompok{
+        vertical-align : middle;
+        position : fixed;
+        right : 0;
+        float:left;
+    }
+    .text-vertical{
+        animation-name: example;
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
+        padding : 10px;
+        color : white;
+        border-radius : 10px;
+        background-color :rgba(75, 75, 75, 0.5);
+        rotate : -90deg;
+        margin-top : 40%;
+    }
+    .anggota{
+        color : white;
+        transition: .5s;
+        display:inline;
+        border-radius : 10px;
+        padding : 20px;
+        float:right;
+        background-color :rgba(75, 75, 75, 0.5);
+    }
+    .anggota.hide{
+        color : white;
+        transition: .5s;
+        display :none;
+        border-radius : 10px;
+        padding : 20px;
+        float:right;
+        background-color :rgba(75, 75, 75, 0.5);
+    }
+    .y-scrollbar{
+        overflow-y:scroll; overflow-x:hidden;
+    }
+    .y-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .proses{
+        margin-top:5px;color:black;width:100%; height:8rem;
+    }
+    .div1{
+        padding:10px;float:left; width:42%;
+    }
+    .div2{
+        border-radius:5px;border:solid white 2px; overflow-y:auto; overflow-x:hidden; height:21rem;float:left; width:47%; margin-left : 1.5rem; padding:10px;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .div1{
+            padding:0px;float:left; width:95%;
+        }
+        .div2{
+            border-radius:5px;
+            border:solid white 2px; 
+            overflow-y:auto; overflow-x:hidden;
+            height:21rem;float:left; 
+            width:95%; 
+            margin-top : 1rem;
+            margin-left : 0rem; 
+            padding:10px;
+        }
+    }
+</style>
+<body class="bg">
+    <!-- <img src="/gambar/logoumrah.png" width="100px"style="position:fixed; left:20px;top:20px;"/> -->
+    <div class = "center">
+    <div class="bg-alpha">
+        <div class="anggota-kelompok">
+            <button class="text-vertical" id="anggota">Anggota</button>
+            <div class="anggota hide" id="anggota-list">
+                <span>2201020052</span><br>
+                <span>Ade Latifia</span><br><br>
+                <span>2201020083</span><br>
+                <span>Winda Aulia</span><br><br>
+                <span>2201020084</span><br>
+                <span>Tiara Devina Putri</span><br><br>
+                <span>2201020103</span><br>
+                <span>Muhammad Chandra Ramadhan</span><br><br>
+                <span>2201020122</span><br>
+                <span>Zeldiyan Arafat</span><br><br>
+            </div>
+        </div>
+        <h1 class="text-style">Turing Auto Correction Kelompok 3 TBFO</h1>
+        <div class = "div1">
+            <form action="/process_text" method="post" onsubmit="updateLabel(event)">
+                <label for="input_text" class="text-style  m-text1" >Masukkan kata/kalimat</label><br>
+                <input class= "text-field" style="width:90%;" type="text" id="input_text" name="input_text" required>
+                <br><br>
+                <label  class="text-style" style="margin-bottom:10px;">Hasil Koreksi :</label>
+                <br><span class="text-style"style="width:5rem; margin-top:20px;padding-right:10px;" id="hasil">NULL</span><br><br>
+                <label  class="text-style" >Proses :</label>
+                <div class="text-style y-scrollbar proses" id="output_label"><span class="text-style">Belum ada proses</span></div><br><br>
+                <button class="btn-style" style="text-align:center;"type="submit">Koreksi<image style="margin-left:5px;"width="12px" src="/gambar/send.png"/></button>
+            </form>
+        </div>
+        <div  class="div2">
+            <span class="text-style" style="font-size:1rem;"> Proses</span><br>
+            <span class="text-style" style="" id="history"></span>
+        </div>
+       
+        </div>
+    <div>
+        
+   <script>
+    let isProses = false;
+    let output_count = 0;
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+       function updateLabel() {
+           var inputText = document.getElementById("input_text").value;
+           document.getElementById("output_label").innerHtml =  inputText;  
+       }
+
+       function textBox(text,color){
+        output_count+=1;
+        return  "<label style='font-weight: bold;font-size:1rem;border-radius: 5px;padding:10px 15px;background-color:"+color+";margin-right:10px;'>"+text+"</label>" + (output_count%5 ? "" : "<br><br><br>");
+        }
+
+        const scrollToBottom = (id) => {
+            const element = document.querySelector("#"+id);
+            element.scrollTop = 0;
+        }
+
+       function setLabel(text,data,pos){
+        output_count=0;
+        document.getElementById("output_label").innerHTML =  "<label style='color:white;'>"+text.toString()+"</label><br><br>";
+            for(let i=0;i<data.length;i++){
+                document.getElementById("output_label").innerHTML +=  textBox(data[i],pos==i ? "yellow" : "white");
+                scrollToBottom("output_label");
+            }
+            
+        }
+
+        document.getElementById("anggota").addEventListener('click',()=>{
+            document.getElementById("anggota-list").classList.toggle("hide"); 
+        });
+
+       // Fungsi untuk mengambil data dari server dan memperbarui label
+       async function fetchData() {
+           const response = await fetch('/process_text', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/x-www-form-urlencoded',
+               },
+               body: new URLSearchParams(new FormData(document.forms[0])),
+           });
+
+           const data = await response.json();
+           console.log(data);
+           document.getElementById("history").innerText = "";
+           isProses = true;
+           document.getElementById("hasil").innerText =  data.hasil;  
+           for(let proes in data.proses){
+                output_count = 0;
+                let pos = 0;
+                let temp = 'R';
+                for(let proses in data.proses[proes]){
+                    let len = data.proses[proes][proses].length;
+                    setLabel(data.proses[proes][proses][0],data.proses[proes][proses][1],pos);
+                    pos += data.proses[proes][proses][2] == "R" ? 1 : (temp==data.proses[proes][proses][2]?-1:0); 
+                    temp = data.proses[proes][proses][2]
+                    document.getElementById("history").innerText += "--------------------------------------------------\n";  
+                    document.getElementById("history").innerText +=  data.proses[proes][proses][0]+"\n"+  data.proses[proes][proses][1] + "\n";  
+                    await sleep(1000);
+                }
+               
+           }
+           isProses = false;
+           
+       }
+
+      
+
+       // Fungsi yang dipanggil saat formulir di-submit
+       function updateLabel(event) {
+            event.preventDefault(); // Mencegah formulir untuk dikirim secara default
+            if(!isProses) fetchData(); // Memanggil fungsi fetchData untuk mendapatkan dan memperbarui label
+            else alert("Input masih diproses \nHarap tunggu !");
+        }
+
+        setLabel("Belum ada proses","     ");
+   </script>
+   <footer style="position:fixed;color:white; left:0;right:0;bottom:0;text-align:center; width:100%; padding:10px; ">Copyright by Kelompok 3 TBFO</footer>
+</body>
+</html>
